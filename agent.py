@@ -13,6 +13,19 @@ import xml.etree.ElementTree as ET
 
 API_KEY = os.environ["GEMINI_API_KEY"]
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")  # đổi nếu Google đổi tên model
+def pick_model():
+    url = "https://generativelanguage.googleapis.com/v1beta/models?pageSize=100&key=" + API_KEY
+    with urllib.request.urlopen(url, timeout=30) as r:
+        models = json.load(r).get("models", [])
+    names = [m["name"].split("/")[-1] for m in models
+             if "generateContent" in m.get("supportedGenerationMethods", [])]
+    print("Models:", names)
+    bad = ("lite", "image", "tts", "live", "preview", "exp", "audio", "thinking")
+    flash = [n for n in names if "flash" in n and not any(b in n for b in bad)]
+    return sorted(flash)[-1] if flash else names[0]
+
+
+MODEL = os.environ.get("GEMINI_MODEL") or pick_model()
 
 KEYWORDS = [
     "AI ngân hàng",
