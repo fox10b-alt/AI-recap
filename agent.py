@@ -26,6 +26,7 @@ def pick_model():
 
 
 MODEL = os.environ.get("GEMINI_MODEL") or pick_model()
+MODEL = "gemini-3.8-flash"
 
 KEYWORDS = [
     "AI ngân hàng",
